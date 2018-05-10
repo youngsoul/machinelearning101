@@ -3,6 +3,7 @@ from matplotlib.colors import ListedColormap
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
 
 # Import patch for drawing rectangles in the legend
 from matplotlib.patches import Rectangle
@@ -129,7 +130,19 @@ def plot_cv(cv, X, y):
         mask[test_index] = 1
         masks.append(mask)
 
-    plt.matshow(masks)
+    # to change the figure size of the default matshow there
+    # are 2 options.
+    # plt.figure(figsize=(12, 8))
+    # plt.matshow(masks, fignum=1)
+
+    fig, ax = plt.subplots(figsize=(12,6))
+    ax.matshow(masks, aspect='auto')
+
+def run_knn_with_cv(n_neighbors, features, targets, cv):
+    knn = KNeighborsClassifier(n_neighbors=n_neighbors)
+    scores = cross_val_score(knn, features, targets, cv=cv, scoring='accuracy')
+    return scores
+
 
 def plot_iris_scatter(X, y, target_names, x_label='Sepal length (cm)', y_label='Sepal width (cm)', title='Sepal width vs length', cmap = cmap_bold):
     _init_colors()
